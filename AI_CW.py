@@ -1,3 +1,4 @@
-print("Test1")
-print("Test2")
-print("test3")
+import pandas as pd
+
+f=pd.read_csv('Data.csv')
+f.info()
