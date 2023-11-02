@@ -42,4 +42,9 @@ for index in range(len(numpyLandVal)):
 # Outputs data as scatter graph
 graph = sns.FacetGrid(exampleData)
 graph.map(plt.scatter,"SalePrice","Lot Area",edgecolor = "Blue" ).add_legend()
+
+# Generates line of best fit, adds to graph before display
+model = np.poly1d(np.polyfit(exampleData["SalePrice"],exampleData["Lot Area"],1))
+polyline = np.linspace(exampleData.min(), exampleData.max(), 50)
+plt.plot(polyline, model(polyline))
 plt.show()
