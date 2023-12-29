@@ -1,10 +1,12 @@
+
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+# matplotlib.use('Agg')
 import numpy as np
 
 # Load data from file
-f=pd.read_csv('C:\\Users\\matth\\Downloads\\Data.csv')
+f=pd.read_csv('Data.csv')
 exampleData = f[["Lot Area","SalePrice"]]
 
 # exampleGraph = sns.load_dataset(exampleData)
@@ -47,4 +49,5 @@ graph.map(plt.scatter,"SalePrice","Lot Area",edgecolor = "Blue" ).add_legend()
 model = np.poly1d(np.polyfit(exampleData["SalePrice"],exampleData["Lot Area"],1))
 polyline = np.linspace(exampleData.min(), exampleData.max(), 50)
 plt.plot(polyline, model(polyline))
-plt.show()
+plt.savefig("./plots/test.png")
+plt.clf()
