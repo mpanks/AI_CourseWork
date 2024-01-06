@@ -1,9 +1,9 @@
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-import math
-# matplotlib.use('Agg')
 import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn import metrics
 # Load data from file
 allData=pd.read_csv('Data.csv', skip_blank_lines=True)
 
@@ -27,13 +27,57 @@ for col in trimmedData:
     mean = currentCol.mean()
     trimmedData[col] = trimmedData[col].fillna(mean)
 
+#Partition dataset 80/20 for training & testingpytho
+#2930 indexes, highest index = 2929
+#Training data = 0-2344
+#Test data = 2343-2929 
+trainingData = trimmedData.iloc[:2344]
+testData = trimmedData.tail(586)
 
-for val in trimmedData["Lot Frontage"]:
-    print(val)
+x_test= testData[["MS SubClass","Lot Frontage","Lot Area","Overall Qual","Overall Cond",
+"Year Built","Year Remod/Add","Mas Vnr Area",
+"BsmtFin SF 1","BsmtFin SF 2","Bsmt Unf SF","Total Bsmt SF","1st Flr SF","2nd Flr SF",
+"Low Qual Fin SF","Gr Liv Area","Bsmt Full Bath","Bsmt Half Bath",
+"Full Bath","Half Bath","Bedroom AbvGr","Kitchen AbvGr",
+"TotRms AbvGrd","Fireplaces","Garage Yr Blt","Garage Cars","Garage Area",
+"Wood Deck SF","Open Porch SF", "Enclosed Porch",
+"3Ssn Porch","Screen Porch","Pool Area","Misc Val","Mo Sold","Yr Sold"]]
 
-#print("Mean: ", mean)
- 
-#TODO: Partition dataset 80/20 for training & testingpytho
+x_train=trainingData[["MS SubClass","Lot Frontage","Lot Area","Overall Qual","Overall Cond",
+"Year Built","Year Remod/Add","Mas Vnr Area",
+"BsmtFin SF 1","BsmtFin SF 2","Bsmt Unf SF","Total Bsmt SF","1st Flr SF","2nd Flr SF",
+"Low Qual Fin SF","Gr Liv Area","Bsmt Full Bath","Bsmt Half Bath",
+"Full Bath","Half Bath","Bedroom AbvGr","Kitchen AbvGr",
+"TotRms AbvGrd","Fireplaces","Garage Yr Blt","Garage Cars","Garage Area",
+"Wood Deck SF","Open Porch SF", "Enclosed Porch",
+"3Ssn Porch","Screen Porch","Pool Area","Misc Val","Mo Sold","Yr Sold"]]
+
+y_test= testData["SalePrice"]
+y_train=trainingData["SalePrice"]
+
+#Linear Regression
+
+linearModel = LinearRegression()
+linearModel.fit(x_train, y_train)
+
+predictions = linearModel.predict(x_test)
+plt.scatter(y_test, predictions)
+plt.savefig("./plots/linearRegressionPredictions.png")
+plt.clf()
+
+##Compute Mean Absolute Error
+print("Linear MAE: ", metrics.mean_absolute_error(y_test, predictions))
+
+##Compute Mean Squared Error
+print("Linear MSE: ", metrics.mean_squared_error(y_test,predictions))
+
+##Compute Root Mean Squared Error
+print("Linear RMSE: ", np.sqrt(metrics.mean_squared_error(y_test, predictions)))
+
+#Polynomial Regresssion
+
+#Neural Network
+
 
 # exampleGraph = sns.load_dataset(exampleData)
 #calculatorStuff = exampleData["Lot Area"].to_numpy()
