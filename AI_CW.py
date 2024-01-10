@@ -6,6 +6,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn import metrics
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.model_selection import train_test_split
+
 # Load data from file
 allData=pd.read_csv('Data.csv', skip_blank_lines=True)
 
@@ -88,7 +89,61 @@ fig.figure.savefig("./plots/PolyRegression")
 fig.clear()
 
 #Neural Network
+X_new, X_test, y_new, y_test = train_test_split(X, Y, test_size=0.2, random_state=0)
+dev_per = X_test.shape[0]/X_new.shape[0]
+X_train, X_dev, y_train, y_dev = train_test_split(X_new, y_new, test_size=dev_per, random_state=0)
 
+from keras.models import Sequential
+from keras.layers import Dense
+from tensorflow.keras.optimizers import Adam
+
+model = Sequential([
+    Dense(128, activation='relu', input_shape=(26,)),
+    Dense(128, activation='relu'),
+    Dense(128, activation='relu'),
+    Dense(128, activation='relu'),
+    Dense(128,activation='relu'),
+    Dense(1, activation='linear'),
+])
+
+optimizer = Adam(learning_rate=0.001)
+
+model.compile(optimizer= optimizer,
+              loss='mean_squared_error',
+              metrics=['mean_squared_error'])
+
+hist = model.fit(X_train, y_train,
+          batch_size=0, epochs=128,
+          validation_data=(X_dev, y_dev),
+          verbose = 0)
+
+
+#Loss of NNet
+plt.plot(hist.history['loss'])
+plt.plot(hist.history['val_loss'])
+plt.title('Model loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Val'], loc='upper right')
+plt.savefig("./plots/NNetLoss.png")
+plt.clf()
+
+#Accuracy of NNet
+import matplotlib.pyplot as plt
+plt.plot(hist.history['mean_squared_error'])
+plt.plot(hist.history['val_mean_squared_error'])
+plt.title('Model accuracy')
+plt.ylabel('MSE')
+plt.xlabel('Epoch')
+plt.legend(['Train', 'Val'], loc='lower right')
+plt.savefig("./plots/NNetAccuracy.png")
+plt.clf()
+
+# Evaluate the model on the test set
+test_loss, test_accuracy = model.evaluate(X_test, y_test, verbose=1)
+# Print the accuracy
+print(f"Test MSE: {test_accuracy}")
+print(f"Val Loss: {test_loss}")
 
 # exampleGraph = sns.load_dataset(exampleData)
 #calculatorStuff = exampleData["Lot Area"].to_numpy()
